@@ -1,4 +1,4 @@
-[New!] Please also check [WAFT](https://github.com/princeton-vl/WAFT), our new efficient state-of-the-art method. 
+[New!] Please also check [WAFT](https://github.com/princeton-vl/WAFT) and [WAFT-Stereo](https://github.com/princeton-vl/WAFT-Stereo), our new efficient state-of-the-art methods for optical flow and stereo matching.
 
 # SEA-RAFT
 
