@@ -13,10 +13,10 @@ import torch.utils.data as data
 
 from config.parser import parse_args
 
-import datasets
-from raft import RAFT
-from utils.flow_viz import flow_to_image
-from utils.utils import load_ckpt
+# import datasets
+from core.raft import RAFT
+from core.utils.flow_viz import flow_to_image
+from core.utils.utils import load_ckpt
 
 def create_color_bar(height, width, color_map):
     """
