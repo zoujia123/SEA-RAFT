@@ -18,8 +18,7 @@ from core.raft import RAFT
 from core.utils.flow_viz import flow_to_image
 from core.utils.utils import load_ckpt
 
-from core.c2rf.encoder import AE_Encoder
-from core.utils.utils import load_ckpt
+
 
 
 def create_color_bar(height, width, color_map):
@@ -98,28 +97,6 @@ def calc_flow(args, model, image1, image2):
 @torch.no_grad()
 def demo_data(path, args, model, image1, image2):
 
-    # 将 image1, image2 从 tensor 转为 numpy，转换为 YCbCr 并取 Y 通道
-    img1_np = image1[0].permute(1, 2, 0).cpu().numpy().astype('uint8')
-    img2_np = image2[0].permute(1, 2, 0).cpu().numpy().astype('uint8')
-    img1_ycbcr = cv2.cvtColor(img1_np, cv2.COLOR_RGB2YCrCb)
-    img2_ycbcr = cv2.cvtColor(img2_np, cv2.COLOR_RGB2YCrCb)
-    # 取Y通道
-    img1_y = img1_ycbcr[..., 0]
-    img2_y = img2_ycbcr[..., 0]
-    # 转为tensor并恢复batch和通道维度
-    img1_y = torch.tensor(img1_y, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(image1.device)
-    img2_y = torch.tensor(img2_y, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(image2.device)
-
-    encoder = AE_Encoder().to(device=torch.device('cpu'))
-    load_ckpt(encoder, r'D:\study\VIF\registration\SEA-RAFT\core\c2rf\Encoder.pth')  # 路径根据你的实际位置调整
-    encoder.eval()
-
-    # 获取encoder输出
-    _, _, image2, _, _, _, image1, _ = encoder(img1_y, img2_y)
-    # 只取前三个通道（如果通道数>=3，否则全部）
-    image1 = image1[:, :3, :, :] if image1.shape[1] >= 3 else image1
-    image2 = image2[:, :3, :, :] if image2.shape[1] >= 3 else image2
-
     os.system(f"mkdir -p {path}")
     H, W = image1.shape[2:]
     flow, info = calc_flow(args, model, image1, image2)
@@ -130,9 +107,9 @@ def demo_data(path, args, model, image1, image2):
 
 @torch.no_grad()
 def demo_custom(model, args, device=torch.device('cuda')):
-    image1 = cv2.imread("./custom/31vis.png")
+    image1 = cv2.imread("./custom/image1.jpg")
     image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
-    image2 = cv2.imread("./custom/31ir.png")
+    image2 = cv2.imread("./custom/image2.jpg")
     image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2RGB)
     image1 = torch.tensor(image1, dtype=torch.float32).permute(2, 0, 1)
     image2 = torch.tensor(image2, dtype=torch.float32).permute(2, 0, 1)
